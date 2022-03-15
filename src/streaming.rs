@@ -1,7 +1,5 @@
 use base64::decode;
 use futures::{ future, Stream, SinkExt, StreamExt };
-use protobuf::Message as Pmessage;
-
 use serde::Serialize;
 use std::sync::{ mpsc, Arc, Mutex };
 use tokio_tungstenite::{ connect_async, tungstenite::protocol::Message };
@@ -81,7 +79,7 @@ impl Streamer {
             return future::ready(None)
          })
          .map(move |msg| {
-            let data: PricingData = Pmessage::parse_from_bytes(&decode(msg).unwrap()).unwrap();
+            let data: PricingData = protobuf::Message::parse_from_bytes(&decode(msg).unwrap()).unwrap();
             Quote {
                symbol: data.id.to_string(),
                timestamp: data.time as i64,
